@@ -28,8 +28,7 @@ require('./app/controllers/index')(app)
 
 
 
-const PORT = 3000
-var server = app.listen(process.env.PORT || PORT, () => console.log(`Servidor rodando na porta: ${PORT}`))
+var server = app.listen(process.env.PORT || 3000)
 
 // Sockeat IO
 var io = socket(server);
