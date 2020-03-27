@@ -3,7 +3,6 @@ const User = require('../models/user');
 const Post = require('../models/post');
 
 
-
 const multer = require('multer')
 const multerConfig = require('../../config/multer')
 
