@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const user = await User.find().populate('post')
+    const user = await User.find()
 
     return res.send({ user })
   } catch (err) {
