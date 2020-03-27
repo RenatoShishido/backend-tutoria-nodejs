@@ -5,22 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path')
 
 
-
-
-app.get('/', (req, res) => {
-  return res.sendFile('index.html', {root : __dirname + '/public'})
-})
-
-app.set('view engine', 'ejs')
 require("./database/index")
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, DELETE, POST");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token");
-  next();
-});
-
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false}))
