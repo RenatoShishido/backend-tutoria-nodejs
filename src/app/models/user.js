@@ -15,13 +15,15 @@ email: {
 telefone: {
   type: Number,
 },
-endereco: {
+semestre: {
+  type: Number,
+},
+rga: {
   type: String,
 },
-image: {
+post: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Post',
-  required: true
 },
 password: {
     type: String,

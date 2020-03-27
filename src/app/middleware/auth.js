@@ -1,10 +1,10 @@
-require('dotenv/config')
 const jwt = require('jsonwebtoken')
-
+require("dotenv/config")
 
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
+    // console.log(authHeader)
 
     if(!authHeader)
         return res.status(401).send({ error: "Token nao enviado" })

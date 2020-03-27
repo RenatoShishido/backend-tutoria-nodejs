@@ -1,10 +1,10 @@
-require('dotenv/config')
 const express = require('express');
 const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 
+require('dotenv/config')
 const User = require('../models/user');
 const servicePassword = require('../../service/servicePassword')
 
@@ -17,13 +17,9 @@ function generateToken(params = {}) {
 }
 
 router.post('/register', async (req, res) => {
-  var {
-    email
-  } = req.body
+  var { email } = req.body
   try {
-    if (await User.findOne({
-        email
-      }))
+    if (await User.findOne({email}))
       throw {
         log_message: 'Credenciais de email invalido',
         status: '403',
