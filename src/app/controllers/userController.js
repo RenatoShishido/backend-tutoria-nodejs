@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.get('/', async (req, res) => {
   try {
-    const user = await User.find()
+    const user = await User.find().populate(['post'])
 
     return res.send({ user })
   } catch (err) {
@@ -41,6 +41,7 @@ router.post('/upload', multer(multerConfig).single("file"), async (req, res) => 
             size,
             key,
             url: '',
+            user: req._id
           })
 
           return res.json(post)

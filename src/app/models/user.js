@@ -22,7 +22,8 @@ rga: {
   type: String,
 },
 post: {
-  type: String
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Post',
 },
 password: {
     type: String,
