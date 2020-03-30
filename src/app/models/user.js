@@ -21,8 +21,8 @@ semestre: {
 rga: {
   type: String,
 },
-post: {
-  type: String
+profile: {
+  type: String,
 },
 password: {
     type: String,
