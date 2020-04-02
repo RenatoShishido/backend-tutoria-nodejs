@@ -21,6 +21,10 @@ semestre: {
 rga: {
   type: String,
 },
+admin: {
+  type: Boolean,
+  default: false,
+},
 profile: {
   type: String,
 },
@@ -52,6 +56,8 @@ UserSchema.pre('save', async function(next){
 const User = mongoose.model("User" , UserSchema)
 
 module.exports = User;
+
+
 
 
 

@@ -18,6 +18,36 @@ router.get('/', async (req, res) => {
     res.status(500).send({error: "Erro ao listar todos os usuarios"})
   }
 })
+router.delete('/remove/:id', async (req, res) => {
+  try {
+
+    const response  = await User.findByIdAndDelete(req.params.id)
+
+    return res.send()
+    
+  } catch (err) {
+
+    return res.status(400).send({error: "Delete user"})
+
+  }
+
+})
+router.put('/admin/:id', async (req, res) => {
+  try {
+
+    const response  = await User.findByIdAndUpdate(req.params.id, req.body)
+
+    return res.send({ response })
+    
+  } catch (err) {
+
+    return res.status(400).send({error: "Usuario adm error"})
+
+  }
+
+})
+
+
 router.put('/update/:id', multer(multerConfig).single("file") , async (req, res) => {
   function base64_decode(base64str,key){
     var bitmap = new Buffer (base64str, 'base64');
