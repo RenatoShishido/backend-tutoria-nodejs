@@ -76,7 +76,9 @@ const limit = 10
 router.get("/pagination/:pageId", async (req, res) => {
   try {
     const page = req.params.pageId
-    const count = await Tutoria.find().count()
+    const count = await Tutoria.find()
+    .where('status').equals('Aguardando')
+    .count()
 
     const data = await Tutoria.find()
     .select({})
@@ -95,7 +97,9 @@ router.get("/pagination/:pageId", async (req, res) => {
 router.get("/agendado/:pageId", async (req, res) => {
   try {
     const page = req.params.pageId
-    const count = await Tutoria.find().count()
+    const count = await Tutoria.find()
+    .where('status').equals('Agendado')
+    .count()
 
     const data = await Tutoria.find()
     .select({})
