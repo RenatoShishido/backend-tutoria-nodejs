@@ -137,6 +137,17 @@ router.get("/pagination/:pageId", async (req, res) => {
     res.status(500).send({error: "Erro na pagination"})
   }
 })
+router.get("/pagination/search/:Id", async (req, res) => {
+  try {
+    const id = req.params.Id
+
+    const data = await Tutoria.findById(id).populate(['user'])
+
+    return res.send({ data }) 
+  } catch (err) {
+    res.status(500).send({error: "Erro na pagination"})
+  }
+})
 router.get("/agendado/:pageId", async (req, res) => {
   try {
     const page = req.params.pageId
