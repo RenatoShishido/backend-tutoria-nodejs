@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const User = require('../models/user');
 
 const fs = require('fs')
@@ -60,6 +61,15 @@ router.put('/admin/:id', async (req, res) => {
 
 
 router.put('/update/:id', multer(multerConfig).single("file") , async (req, res) => {
+  function deletarAnexo(key) {
+    fs.unlink(`${path.join(__dirname, '../../../tmp/uploads', key)}`, err => {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    });
+    return 'Anexo deletado com sucesso';
+  }
   function base64_decode(base64str,key){
     var bitmap = new Buffer (base64str, 'base64');
     fs.writeFileSync('src/temp/'+key+'',bitmap, 'binary', function (err){
@@ -94,7 +104,9 @@ router.put('/update/:id', multer(multerConfig).single("file") , async (req, res)
           key,
           url: '',
           profile: bitmap})
-
+          
+        deletarAnexo(key)
+        
         return res.send({ user })
     }
   } catch (err) {

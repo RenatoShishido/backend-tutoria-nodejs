@@ -25,6 +25,13 @@ router.post('/register', async (req, res) => {
         status: '403',
         client_message: 'Email ja cadastrado'
       }
+    if(!req.body.email && !req.body.nome && !req.body.password) {
+      throw {
+        log_message: 'Credenciais de usuario invalido',
+        status: '403',
+        client_message: 'Usuario invalido'
+      }
+    }
     if (!req.body.nome || typeof req.body.nome == undefined || req.body.nome == null) {
       throw {
         log_message: 'Credenciais de nome invalido',
@@ -39,11 +46,20 @@ router.post('/register', async (req, res) => {
         client_message: 'Email invalido'
       }
     }
-    if (req.body.password.length < 6) {
+    if (!req.body.password || typeof req.body.password == undefined || req.body.password == null) {
       throw {
-        log_message: 'Credenciais de senha invalida',
+        log_message: 'Credenciais de password invalido',
         status: '403',
-        client_message: 'Senha invalida, precisa ter no minino 6 digitos'
+        client_message: 'Password invalida'
+      }
+    }
+    const palavra = req.body.email.split(/[.@]/gi)
+    console.log(palavra)
+    if(palavra[2] !== 'ufms' && palavra[3] !== 'br'){
+      throw {
+        log_message: 'Credenciais de email invalida',
+        status: '403',
+        client_message: 'Email invalida, o email precisa ser institucional'
       }
     }
     const user = await User.create(req.body);
@@ -110,9 +126,9 @@ router.post('/forgot_password', async (req, res) => {
 
     if (!user)
       throw {
-        log_message: 'Credenciais de usuario invalido',
+        log_message: 'Credenciais de email invalido/ forgot/password',
         status: '403',
-        client_message: 'Usuario invalido'
+        client_message: 'Email invalido'
       }
 
     const token = crypto.randomBytes(3).toString('hex');
@@ -130,7 +146,7 @@ router.post('/forgot_password', async (req, res) => {
 
     try {
         const sgEmail = await servicePassword.sendEmail(token, email)
-        console.log(sgEmail)
+  
         return res.send({ sgEmail })
     } catch (err) {
       console.log(err)
@@ -157,9 +173,9 @@ router.post('/reset_password', async (req, res) => {
 
     if (!user)
       throw {
-        log_message: 'Credenciais de usuario invalido',
+        log_message: 'Credenciais de email invalido',
         status: '403',
-        client_message: 'Usuario invalido'
+        client_message: 'Email invalido'
       }
 
     if (token !== user.passwordResetToken)
