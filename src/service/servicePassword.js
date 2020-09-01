@@ -10,29 +10,14 @@ module.exports = class EmailService {
         html: `<html >
         <head>
         </head>
-        <style>
-          .bloco {
-            padding: 100px;
-            width: 50%;
-            border: 1px solid black;
-            border-radius: 10px;
-          }
-          .center {
-            text-align: center;
-          }
-          .color {
-            color: aqua;
-          }
-        </style>
         <body>
-          <div class="bloco">
-            <h1 class="color center">TUTORIA EM PARES</h1>
-            <h2 class="center">Pedido de alteração de senha</h2>
+        <div data-role="module-unsubscribe" class="module" role="module" data-type="unsubscribe" style="color:#444444; font-size:12px; line-height:20px; padding:16px 16px 16px 16px; text-align:Center;" data-muid="4e838cf3-9892-4a6d-94d6-170e474d21e5">
+            <h1 style="color:lightblue;">TUTORIA EM PARES</h1>
+            <h2 >Pedido de alteração de senha</h2>
             <p>Obrigado por entrar em contato sobre a alteração da sua senha. Basta pegar o token e seguir as instruções dentro da página.<strong>${token}</strong></p>
           
             <p>~Seus amigos da Tutoria em Pares</p>
-          </div>
-        
+
         </body>
         </html> `,
       };
