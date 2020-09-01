@@ -5,11 +5,37 @@ module.exports = class EmailService {
     try{
       sgMail.setApiKey(process.env.SENDGRID_API_KEY);
       const msg = {
-        to: 'renato.re2012@hotmail.com',
+        to: 'progrenato@gmail.com',
         from: bodyEmail.email,
         subject: bodyEmail.assunto,
-        html: `<strong>EXEMPLO DE ENVIO:</strong>
-        <div>${bodyEmail.content}</div>
+        html: `<html >
+        <head>
+        </head>
+        <style>
+          .bloco {
+            padding: 100px;
+            width: 50%;
+            border: 1px solid black;
+            border-radius: 10px;
+          }
+          .center {
+            text-align: center;
+          }
+          .color {
+            color: aqua;
+          }
+        </style>
+        <body>
+          <div class="bloco">
+            <h1 class="color center">TUTORIA EM PARES</h1>
+            <h2 class="center">Envio de email</h2>
+            <p><strong>${bodyEmail.content}</strong></p>
+          
+            <p>~Seus amigos da Tutoria em Pares</p>
+          </div>
+        
+        </body>
+        </html>
         `,
       };
 
