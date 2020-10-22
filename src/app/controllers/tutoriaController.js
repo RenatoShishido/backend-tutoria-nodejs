@@ -55,6 +55,21 @@ router.post('/', async (req, res) => {
     const {  data, oferecida, institution, discipline, content } = req.body
 
     var tutorias;
+    if(!oferecida && !institution && !discipline && !content) {
+      return res.status(400).send("Necessario preencher os dados")
+    }
+    if(!institution) {
+      return res.status(400).send("Necessario colocar o bloco")
+    }
+    if(!discipline) {
+      return res.status(400).send("Necessario colocar a disciplina")
+    }
+    if(!content) {
+      return res.status(400).send("Necessario colocar o conteudo")
+    }
+    if(!oferecida) {
+      return res.status(400).send("Necessario selecionar o modo no SELECT")
+    }
 
     if (oferecida) {
       const status = 'AguardandoAluno'
