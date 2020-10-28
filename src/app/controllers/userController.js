@@ -121,4 +121,4 @@ router.put('/update/:id', multer(multerConfig).single("file") , async (req, res)
 
 
 
-module.exports = app => app.use('/users', router)
+module.exports = app => app.use('/api/users', router)

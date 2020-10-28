@@ -19,4 +19,4 @@ router.post('/', async (req, res) => {
 })
 
 
-module.exports = app => app.use('/email', router)
+module.exports = app => app.use('/api/email', router)

@@ -67,7 +67,7 @@ router.post('/', async (req, res) => {
     if(!content) {
       return res.status(400).send("Necessario colocar o conteudo")
     }
-    if(!oferecida) {
+    if(oferecida === '' || oferecida === undefined || oferecida === null) {
       return res.status(400).send("Necessario selecionar o modo no SELECT")
     }
 
@@ -189,4 +189,4 @@ router.get("/agendado/:pageId", async (req, res) => {
 
 
 
-module.exports = app => app.use("/tutorias", router);
+module.exports = app => app.use("/api/tutorias", router);
