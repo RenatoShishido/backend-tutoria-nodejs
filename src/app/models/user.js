@@ -21,7 +21,7 @@ semestre: {
 rga: {
   type: String,
 },
-admin: {
+is_admin: {
   type: Boolean,
   default: false,
 },

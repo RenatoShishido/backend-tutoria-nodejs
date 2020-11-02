@@ -1,192 +1,141 @@
-// IMPORTS
-const express = require("express");
+const serviceTutoria = require("../../service/tutoriaService");
 
-const authMiddleware = require('../middleware/auth');
-const TutoriaBusiness = require('../business/tutoriaBusiness');
+module.exports = class tutoriaController {
+  static async findTutoria(req, res) {
+    try {
+      const tutorias = await serviceTutoria.findTutoria();
 
-const Tutoria = require('../models/tutoria')
-const User = require('../models/user')
-
-const router = express.Router();
-// MIDDLEWARE
-router.use(authMiddleware);
-// READ
-router.get('/', async (req, res) => {
-  try {
-    const tutorias = await Tutoria.find()
-    .where('oferecida', false)
-    .populate(['user'])
-    return res.send({ tutorias })
-  } catch (err) {
-    return res.status(400).send({ error: "Erro ao carregar as tutorias" })
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(error);
+    }
   }
-})
-router.get('/getTutoriasOferecidas', async (req, res) => {
-  try {
-    const tutorias = await Tutoria.find()
-    .where('status').equals('AguardandoAluno')
-    .where('oferecida', true)
-    .populate(['tutor'])
+  static async findTutoriaOferecida(req, res) {
+    try {
+      const tutorias = await serviceTutoria.findTutoriaOferecida();
 
-    return res.send({ tutorias })
-
-  } catch (err) {
-    return res.status(400).send({ error: "Erro ao carregar as tutorias" })
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(error);
+    }
   }
-})
+  static async findTutoriaId(req, res) {
+    try {
+      const tutorias = await serviceTutoria.findTutoriaId(req.params.tutoriaId);
 
-router.get('/:tutoriaId', async (req, res) => {
-  try {
-
-    const tutorias = await Tutoria.findById(req.params.tutoriaId).populate(['user'])
-
-    return res.send({ tutorias })
-  } catch (err) {
-    return res.status(400).send({ error: "Erro ao carregar as tutorias" })
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(error);
+    }
   }
-})
+  static async createTutoria(req, res) {
+    try {
+      var tutorias;
+      const { data, oferecida, institution, discipline, content } = req.body;
 
-
-
-// CREATE
-
-router.post('/', async (req, res) => {
-  try {
-    const {  data, oferecida, institution, discipline, content } = req.body
-
-    var tutorias;
-    if(!oferecida && !institution && !discipline && !content) {
-      return res.status(400).send("Necessario preencher os dados")
-    }
-    if(!institution) {
-      return res.status(400).send("Necessario colocar o bloco")
-    }
-    if(!discipline) {
-      return res.status(400).send("Necessario colocar a disciplina")
-    }
-    if(!content) {
-      return res.status(400).send("Necessario colocar o conteudo")
-    }
-    if(oferecida === '' || oferecida === undefined || oferecida === null) {
-      return res.status(400).send("Necessario selecionar o modo no SELECT")
-    }
-
-    if (oferecida) {
-      const status = 'AguardandoAluno'
-      tutorias = await Tutoria.create({ data, oferecida, status, institution, discipline
-        , content
-        , tutor: req.userId })
-    }
-    else {
-      tutorias = await Tutoria.create({ oferecida, institution, discipline, content, user: req.userId })
-    }
-
-    if (!tutorias)
-      throw {
-        message_log: 'Falha ao criar uma tutoria',
-        status: 403,
-        message_client: 'Falha ao criar uma tutoria'
+      if (!oferecida && !institution && !discipline && !content) {
+        return res.status(400).send("Necessario preencher os dados");
+      }
+      if (!institution) {
+        return res.status(400).send("Necessario colocar o bloco");
+      }
+      if (!discipline) {
+        return res.status(400).send("Necessario colocar a disciplina");
+      }
+      if (!content) {
+        return res.status(400).send("Necessario colocar o conteudo");
+      }
+      if (oferecida === "" || oferecida === undefined || oferecida === null) {
+        return res.status(400).send("Necessario selecionar o modo no SELECT");
       }
 
-    return res.send({ tutorias })
-  } catch (err) {
+      const userId = req.userId
 
-    return res.status(err.status).send(err.message_client)
+      if (oferecida) {
+        const status = "AguardandoAluno";
+        tutorias = await serviceTutoria.createTutoria({
+          data,
+          oferecida,
+          status,
+          institution,
+          discipline,
+          content,
+          userId
+        });
+      } else {
+        tutorias = await serviceTutoria.createTutoria({
+          oferecida,
+          institution,
+          discipline,
+          content,
+          userId
+        });
+      }
 
+      if (!tutorias) res.status(400).send("Falha ao criar uma tutoria");
+
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
-})
-// UPDATE
-router.put('/putTutoriaOferecida/:tutoriaId', async (req, res) => {
-  try {
-
-     const tutoria = await TutoriaBusiness.validaNovoAluno(req)
-     return res.send({tutoria});
-
-  } catch (err) {
-    return res.status(err.status).send(err.client_message)
+  static async updateTutoriaAluno(req, res) {
+    try {
+      const tutoria = await serviceTutoria.validaNovoAluno(req);
+      return res.send({ tutoria });
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
-})
-
-router.put('/:tutoriaId', async (req, res) => {
-  try {
-
-    const tutorias = await Tutoria.findByIdAndUpdate(req.params.tutoriaId, req.body)
-    return res.send({ tutorias });
-
-  } catch (err) {
-    return res.status(400).send({ error: "Erro ao atualizar uma nova tutoria" })
+  static async updateTutoria(req, res) {
+    try {
+      const tutorias = await serviceTutoria.updateTutoria(
+        req.params.tutoriaId,
+        req.body
+      );
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(error);
+    }
   }
-})
-// DELETE
-router.delete('/:tutoriaId', async (req, res) => {
-  try {
-    await Tutoria.findByIdAndRemove(req.params.tutoriaId)
+  static async removeTutoria(req, res) {
+    try {
+      const tutoria = await serviceTutoria.removeTutoriaId(
+        req.params.tutoriaId
+      );
 
-    return res.send()
-  } catch (err) {
-    return res.status(err.status).send({ error: "Delete tutoria" })
+      return res.send(tutoria);
+    } catch (err) {
+      return res.status(500).send(err);
+    }
   }
-})
+  static async paginationTutoria(req, res) {
+    try {
+      const paginas = await serviceTutoria.paginationTutoria(req.params.pageId);
 
-// PAGINATION
-
-const limit = 10
-router.get("/pagination/:pageId", async (req, res) => {
-  try {
-    const page = req.params.pageId
-    const count = await Tutoria.find()
-    .where('status').equals('Aguardando')
-    .count()
-
-    const data = await Tutoria.find()
-    .select({})
-    .where('status').equals('Aguardando')
-    .limit(limit)
-    .skip((page * limit) - limit)
-    .populate(['user'])
-
-
-
-    return res.send({ data, count })
-  } catch (err) {
-    res.status(500).send({error: "Erro na pagination"})
+      return res.send(paginas);
+    } catch (err) {
+      res.status(500).send(error);
+    }
   }
-})
-router.get("/pagination/search/:Id", async (req, res) => {
-  try {
-    const id = req.params.Id
+  static async paginationTutoriaAgendado(req, res) {
+    try {
+      const paginas = await serviceTutoria.paginationTutoriaAgendado(
+        req.params.pageId
+      );
 
-    const data = await Tutoria.findById(id).populate(['user'])
-
-    return res.send({ data }) 
-  } catch (err) {
-    res.status(500).send({error: "Erro na pagination"})
+      return res.send(paginas);
+    } catch (err) {
+      res.status(500).send(error);
+    }
   }
-})
-router.get("/agendado/:pageId", async (req, res) => {
-  try {
-    const page = req.params.pageId
-    const count = await Tutoria.find()
-    .where('status').equals('Agendado')
-    .count()
+  static async searchTutoria(req, res) {
+    try {
+      const data = await serviceTutoria.searchTutoria(req.params.Id);
 
-    const data = await Tutoria.find()
-    .select({})
-    .where('status').equals('Agendado')
-    .limit(limit)
-    .skip((page * limit) - limit)
-    .populate(['user'])
-
-
-
-    return res.send({ data, count })
-  } catch (err) {
-    res.status(500).send({error: "Erro na pagination"})
+      return res.send({ data });
+    } catch (err) {
+      res.status(500).send(error);
+    }
   }
-})
-
-
-
-
-
-module.exports = app => app.use("/api/tutorias", router);
+};

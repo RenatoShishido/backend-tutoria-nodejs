@@ -1,124 +1,90 @@
-const express = require('express')
-const path = require('path')
-const User = require('../models/user');
+const path = require("path");
+const fs = require("fs");
 
-const fs = require('fs')
-const multer = require('multer')
-const multerConfig = require('../../config/multer')
+const User = require('../models/user')
+const serviceUser = require("../../service/userService");
 
+module.exports = class userController {
+  static async findUserAll(req, res) {
+    try {
+      const user = await serviceUser.findUserAll();
 
-const router = express.Router()
-
-router.get('/', async (req, res) => {
-  try {
-    const user = await User.find()
-
-    return res.send({ user })
-  } catch (err) {
-    console.log(err)
-    res.status(500).send({error: "Erro ao listar todos os usuarios"})
+      return res.send(user);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
-})
-router.get('/perfil/:perfilId', async (req, res) => {
-  try {
-    const id = req.params.perfilId
-    const user = await User.findById(id)
+  static async findUserId(req, res) {
+    try {
+      const user = await serviceUser.findUserId(req.params.perfilId);
 
-    return res.send({ user })
-  } catch (err) {
-    console.log(err)
-    res.status(500).send({error: "Erro ao listar todos os usuarios"})
+      return res.send(user);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
-})
-router.delete('/remove/:id', async (req, res) => {
-  try {
+  static async removeUser(req, res) {
+    try {
+      const user = await serviceUser.removeUser(req.params.id);
 
-    const response  = await User.findByIdAndDelete(req.params.id)
-
-    return res.send()
-    
-  } catch (err) {
-
-    return res.status(400).send({error: "Delete user"})
-
+      return res.send(user);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
+  static async updateUser(req, res) {
+    function deletarAnexo(key) {
+      fs.unlink(
+        `${path.join(__dirname, "../../../tmp/uploads", key)}`,
+        (err) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+        }
+      );
+      return "Anexo deletado com sucesso";
+    }
+    function base64_encode(key) {
+      var bitmap = fs.readFileSync("tmp/uploads/" + key + "");
+      return new Buffer.from(bitmap).toString("base64");
+    }
+    try {
+      const { nome, email, telefone, rga, semestre } = req.body;
+      const id = req.params.id;
+      if (req.file === undefined || req.file === null) {
 
-})
-router.put('/admin/:id', async (req, res) => {
-  try {
+        console.log(req.body);
+        const user = await serviceUser.updateUser(id, req.body);
 
-    const response  = await User.findByIdAndUpdate(req.params.id, req.body)
+        return res.send({ user });
+      } else {
+        const { originalname: name, size, filename: key } = req.file;
 
-    return res.send({ response })
-    
-  } catch (err) {
+        const leitura = base64_encode(key);
+        const bitmap =
+          "data:image/jpeg;image/png;image/pjpeg;base64," + leitura;
 
-    return res.status(400).send({error: "Usuario adm error"})
-
-  }
-
-})
-
-
-router.put('/update/:id', multer(multerConfig).single("file") , async (req, res) => {
-  function deletarAnexo(key) {
-    fs.unlink(`${path.join(__dirname, '../../../tmp/uploads', key)}`, err => {
-      if (err) {
-        console.log(err);
-        throw err;
-      }
-    });
-    return 'Anexo deletado com sucesso';
-  }
-  function base64_decode(base64str,key){
-    var bitmap = new Buffer (base64str, 'base64');
-    fs.writeFileSync('src/temp/'+key+'',bitmap, 'binary', function (err){
-      if(err){
-        console.log('Conversao com erro');
-      }
-    } );
-  }
-  //Convertendo arquivo em binário
-  function base64_encode(key){
-    var bitmap = fs.readFileSync('tmp/uploads/'+key+'');
-    return new Buffer (bitmap).toString('base64');
-  }
-  try {
-    const {nome, email, telefone, rga, semestre} = req.body
-    const id = req.params.id
-    if(req.file === undefined || req.file === null){
-      const user = await User.findByIdAndUpdate(id, req.body)
-
-      return res.send({ user })
-    
-    }else{
-      const {originalname: name, size, filename: key } = req.file
-     
-        const leitura = base64_encode(key)
-        const bitmap = "data:image/jpeg;image/png;image/pjpeg;base64," + leitura
-
-        const user = await User.findByIdAndUpdate(id,{
-          nome,email,telefone,rga,semestre,
+        const user = await serviceUser.updateUser(id, {
+          nome,
+          email,
+          telefone,
+          rga,
+          semestre,
           name,
           size,
           key,
-          url: '',
-          profile: bitmap})
-          
-        deletarAnexo(key)
-        
-        return res.send({ user })
+          url: "",
+          profile: bitmap,
+        });
+
+        deletarAnexo(key);
+
+        return res.send({ user });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
     }
-  } catch (err) {
-    console.log(err)
-    res.status(500).send({error: "Erro ao listar todos os usuarios"})
   }
-})
-
-
-
-
-
-
-
-module.exports = app => app.use('/api/users', router)
+};

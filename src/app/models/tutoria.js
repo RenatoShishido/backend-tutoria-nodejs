@@ -27,11 +27,11 @@ iframe: {
 },
 tutor: {
   type: mongoose.Schema.Types.ObjectId,
-  ref: 'User',
+  ref: 'User'
 },
 user: {
   type: mongoose.Schema.Types.ObjectId,
-  ref: 'User',
+  ref: 'User'
 },
 users: [{
     type: mongoose.Schema.Types.ObjectId,
