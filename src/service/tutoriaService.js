@@ -1,11 +1,29 @@
+const { populate } = require("../app/models/tutoria");
 const Tutoria = require("../app/models/tutoria");
 const User = require("../app/models/user");
+const qr = require("qrcode");
 module.exports = class tutoriaService {
+  static async findTutoriaAll() {
+    try {
+      return await Tutoria.find()
+      .populate({path: 'user'})
+      .populate({path: 'tutor'})
+    
+    } catch (error) {
+      console.log(
+        `/services/tutoriaService: error -> findTutoriaAll <<${error}>>`
+      );
+      throw {
+        error: "Nao foi possivel listar todas as tutorias",
+      };
+    }
+  }
   static async findTutoria() {
     try {
       return await Tutoria.find()
       .where("oferecida", false)
-      .populate('user')
+      .populate({path: 'user'})
+      .populate({path: 'tutor'})
     
     } catch (error) {
       console.log(
@@ -22,7 +40,8 @@ module.exports = class tutoriaService {
         .where("status")
         .equals("AguardandoAluno")
         .where("oferecida", true)
-        .populate(["tutor"]);
+        .populate({path: 'user'})
+        .populate({path: 'tutor'})
     } catch (error) {
       console.log(
         `/services/tutoriaService: error -> findTutoriaOferecida <<${error}>>`
@@ -34,7 +53,10 @@ module.exports = class tutoriaService {
   }
   static async findTutoriaId(id) {
     try {
-      return await Tutoria.findById(id).populate(["user"]);
+      return await Tutoria.findById(id)
+                      .populate({path: 'user'})
+                      .populate({path: 'tutor'})
+
     } catch (error) {
       console.log(
         `/services/tutoriaService: error -> findTutoriaId <<${error}>>`
@@ -120,7 +142,25 @@ module.exports = class tutoriaService {
   }
   static async updateTutoria(id, content) {
     try {
-      return await Tutoria.findByIdAndUpdate(id, content);
+      if(content.local === undefined){
+        return await Tutoria.findByIdAndUpdate(id, content);
+      }else {
+        const lista = {
+          tutoriaId: content._id,
+          alunoId: content.user._id,
+          tutorId: content.tutor._id
+        }
+        
+        const listaString = JSON.stringify(lista)
+
+        qr.toDataURL(listaString, async (err, src) => {
+          if (err) throw "Occoreu um erro ao fazer o QR Code"
+  
+          content.qrcode = src
+  
+          return  await Tutoria.findByIdAndUpdate(id, content)
+        });
+      }
     } catch (error) {
       console.log(
         `/services/tutoriaService: error -> updateTutoria <<${error}>>`
@@ -144,7 +184,8 @@ module.exports = class tutoriaService {
         .equals("Aguardando")
         .limit(limit)
         .skip(page * limit - limit)
-        .populate(["user"]);
+        .populate({path: 'user'})
+        .populate({path: 'tutor'})
 
       return { count, data };
     } catch (error) {
@@ -170,7 +211,8 @@ module.exports = class tutoriaService {
         .equals("Agendado")
         .limit(limit)
         .skip(page * limit - limit)
-        .populate(["user"]);
+        .populate({path: 'user'})
+        .populate({path: 'tutor'})
 
       return { data, count };
     } catch (error) {
@@ -184,7 +226,8 @@ module.exports = class tutoriaService {
   }
   static async searchTutoria(id) {
     try {
-      return await Tutoria.findById(id).populate(["user"]);
+      return await Tutoria.findById(id).populate({path: 'user'})
+                          .populate({path: 'tutor'})
     } catch (error) {
       console.log(
         `/services/tutoriaService: error -> searchTutoria <<${error}>>`

@@ -53,9 +53,29 @@ module.exports = class userController {
       const { nome, email, telefone, rga, semestre } = req.body;
       const id = req.params.id;
       if (req.file === undefined || req.file === null) {
-
-        console.log(req.body);
         const user = await serviceUser.updateUser(id, req.body);
+
+        return res.send({ user });
+      } else if(telefone == "undefined") {
+        const { originalname: name, size, filename: key } = req.file;
+
+        const leitura = base64_encode(key);
+        const bitmap =
+          "data:image/jpeg;image/png;image/pjpeg;base64," + leitura;
+
+        const user = await serviceUser.updateUser(id, {
+          nome,
+          email,
+          rga,
+          semestre,
+          name,
+          size,
+          key,
+          url: "",
+          profile: bitmap,
+        });
+
+        deletarAnexo(key);
 
         return res.send({ user });
       } else {
@@ -68,9 +88,9 @@ module.exports = class userController {
         const user = await serviceUser.updateUser(id, {
           nome,
           email,
-          telefone,
           rga,
           semestre,
+          telefone,
           name,
           size,
           key,

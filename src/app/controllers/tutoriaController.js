@@ -1,6 +1,15 @@
 const serviceTutoria = require("../../service/tutoriaService");
 
 module.exports = class tutoriaController {
+  static async findTutoriaAll(req, res) {
+    try {
+      const tutorias = await serviceTutoria.findTutoriaAll();
+
+      return res.send({ tutorias });
+    } catch (err) {
+      return res.status(500).send(error);
+    }
+  }
   static async findTutoria(req, res) {
     try {
       const tutorias = await serviceTutoria.findTutoria();

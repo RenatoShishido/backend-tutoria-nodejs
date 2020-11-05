@@ -20,8 +20,10 @@ semestre: {
 },
 rga: {
   type: String,
+  unique: true,
+  require: true,
 },
-is_admin: {
+admin: {
   type: Boolean,
   default: false,
 },

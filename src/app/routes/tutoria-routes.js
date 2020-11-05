@@ -7,6 +7,7 @@ const middlewareAuth = require('../middleware/auth')
 router.use(middlewareAuth);
 
 router.get('/', controllerTutoria.findTutoria)
+router.get('/findAll', controllerTutoria.findTutoriaAll)
 router.get('/getTutoriasOferecidas', controllerTutoria.findTutoriaOferecida)
 router.get('/:tutoriaId', controllerTutoria.findTutoriaId)
 router.get('/pagination/search/:Id', controllerTutoria.searchTutoria)

@@ -32,11 +32,25 @@ module.exports = class userService {
         try {
 
             return  await User.findOne({
-                email,
+                email
               }).select("+password");
 
         } catch (error) {
             console.log(`/services/userService: error -> findUserOne <<${error}>>`)
+            throw {
+                error: "Nao foi possivel achar um usuario"
+            }
+        }
+    }
+    static async findUserOneRga(rga) {
+        try {
+
+            return  await User.findOne({
+                rga
+              })
+
+        } catch (error) {
+            console.log(`/services/userService: error -> findUserOneRga <<${error}>>`)
             throw {
                 error: "Nao foi possivel achar um usuario"
             }

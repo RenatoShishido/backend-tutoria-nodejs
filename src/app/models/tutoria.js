@@ -22,8 +22,18 @@ status: {
   type: String,
   default: "Aguardando"
 },
-iframe: {
+local: {
   type: String
+},
+agendada: {
+  type: Boolean,
+  default: false
+},
+qrcode: {
+  type: String
+},
+data: {
+  type: Date
 },
 tutor: {
   type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +47,7 @@ users: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
 }],
-data : {
+data_cadastro: {
     type: Date,
     default: Date.now(),
 },

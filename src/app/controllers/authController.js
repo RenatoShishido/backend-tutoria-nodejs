@@ -4,6 +4,7 @@ const crypto = require("crypto");
 
 require("dotenv/config");
 const serviceUser = require("../../service/userService");
+const User = require("../models/user");
 const servicePassword = require("../../service/servicePassword");
 
 function generateToken(params = {}) {
@@ -14,10 +15,12 @@ function generateToken(params = {}) {
 
 module.exports = class controllerAuth {
   static async registerAuth(req, res) {
-    var { email } = req.body;
+    var { email, rga } = req.body;
     try {
       if (await serviceUser.findUserOne(email))
         return res.status(400).send("Email ja cadastrado");
+      if (await serviceUser.findUserOneRga(rga))
+        return res.status(400).send("RGA ja cadastrado");
       else if (!req.body.email && !req.body.nome && !req.body.password)
         return res.status(400).send("Necessario preencher os dados");
       else if (
