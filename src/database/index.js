@@ -2,7 +2,7 @@ require("dotenv/config")
 const mongoose = require("mongoose")
 
  mongoose.connect(`mongodb://${process.env.USERS}:${process.env.PASSWORD}@${process.env.DOCKER_MONGO_LOCAL}:${process.env.DOCKER_MONGO_PORT}`, {
-
+  dbName: 'tutoria',
      useNewUrlParser: true,
       useUnifiedTopology: true,
        useFindAndModify: false
