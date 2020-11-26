@@ -25,6 +25,11 @@ status: {
 local: {
   type: String
 },
+qrcode_valido: {
+  data_ini: Date,
+  data_fim: Date,
+  valido: false,
+},
 agendada: {
   type: Boolean,
   default: false
