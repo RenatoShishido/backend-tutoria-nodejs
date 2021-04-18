@@ -7,7 +7,7 @@ const controllerUser = require('../controllers/userController')
 const middlewareAuth = require('../middleware/auth')
 const middlewareAdmin = require('../middleware/admin')
 
-router.use(middlewareAuth);
+// router.use(middlewareAuth);
 
 router.get('/', controllerUser.findUserAll)
 router.get('/perfil/:perfilId', controllerUser.findUserId)
