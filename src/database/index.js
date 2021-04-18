@@ -1,16 +1,21 @@
-require("dotenv/config")
-const mongoose = require("mongoose")
+require("dotenv/config");
+const mongoose = require("mongoose");
 
- mongoose.connect(`mongodb://${process.env.USERS}:${process.env.PASSWORD}@${process.env.DOCKER_MONGO_LOCAL}:${process.env.DOCKER_MONGO_PORT}`, {
-  dbName: 'tutoria',
-     useNewUrlParser: true,
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.USERS}:${process.env.PASSWORD}@cluster0.y0qaz.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
+    {
+      dbName: "tutoria",
+      useNewUrlParser: true,
       useUnifiedTopology: true,
-       useFindAndModify: false
-     })
-    .catch((err) => console.log("error: " + err))
+      useFindAndModify: false,
+      useCreateIndex: true
+    }
+  )
+  .catch((err) => console.log("error: " + err));
 
-const db = mongoose.connection
+const db = mongoose.connection;
 
-db.once('open', () => console.log("Banco de dados funcionando ..."))
+db.once("open", () => console.log("Banco de dados funcionando ..."));
 
 module.exports = mongoose;

@@ -12,9 +12,8 @@ app.use(bodyParser.urlencoded({ extended: false}))
 app.use(bodyParser.json())
 
 app.use('/tmp/uploads', express.static(path.resolve(__dirname, '..', 'tmp', 'uploads')))
-
 require('./app/routes/index')(app)
 
 
 
-app.listen(3000, () => console.log("Servidor rodando na porta 3000"))
+app.listen(process.env.PORT || 3000, () => console.log("Servidor rodando na porta 3000"))
